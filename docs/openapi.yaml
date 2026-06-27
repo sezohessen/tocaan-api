@@ -165,12 +165,64 @@ paths:
                     example: Unauthenticated.
       tags:
         - 'Admin Orders'
+    put:
+      summary: 'Update any order (admin)'
+      operationId: updateAnyOrderadmin
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Orders'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  description: 'Must be 3 characters.'
+                  example: bng
+                tax:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 12
+                discount:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 77
+                meta:
+                  type: object
+                  description: ''
+                  example: null
+                  properties: {}
+                  nullable: true
+                items:
+                  type: array
+                  description: 'Must have at least 1 items.'
+                  example: null
+                  items:
+                    type: object
+                    properties:
+                      product_name:
+                        type: string
+                        description: 'This field is required when <code>items</code> is present. Must not be greater than 255 characters.'
+                        example: i
+                      quantity:
+                        type: integer
+                        description: 'This field is required when <code>items</code> is present. Must be at least 1.'
+                        example: 43
+                      price:
+                        type: number
+                        description: 'This field is required when <code>items</code> is present. Must be at least 0.'
+                        example: 60
     parameters:
       -
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -200,7 +252,7 @@ paths:
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -271,7 +323,42 @@ paths:
         in: path
         name: payment_uuid
         description: ''
-        example: 019f0703-6050-71db-8dbe-ffb26703aaf2
+        example: 019f0749-a35e-7266-b158-0489259295df
+        required: true
+        schema:
+          type: string
+  '/api/v1/admin/payments/{payment_uuid}/refund':
+    post:
+      summary: ''
+      operationId: postApiV1AdminPaymentsPayment_uuidRefund
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Payments'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: ''
+                  example: 4326.41688
+                  nullable: true
+                reason:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: m
+                  nullable: true
+    parameters:
+      -
+        in: path
+        name: payment_uuid
+        description: ''
+        example: 019f0749-a35e-7266-b158-0489259295df
         required: true
         schema:
           type: string
@@ -359,7 +446,7 @@ paths:
                 is_active:
                   type: boolean
                   description: ''
-                  example: true
+                  example: false
               required:
                 - name
                 - sku
@@ -429,7 +516,7 @@ paths:
                 is_active:
                   type: boolean
                   description: ''
-                  example: false
+                  example: true
     delete:
       summary: ''
       operationId: deleteApiV1AdminProductsProduct_id
@@ -943,7 +1030,7 @@ paths:
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -961,7 +1048,7 @@ paths:
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -979,7 +1066,7 @@ paths:
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -1022,7 +1109,7 @@ paths:
                 method:
                   type: string
                   description: ''
-                  example: paypal
+                  example: credit_card
                   enum:
                     - credit_card
                     - paypal
@@ -1039,7 +1126,7 @@ paths:
         in: path
         name: order_uuid
         description: ''
-        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        example: 019f0749-a351-731e-9264-280e96308d52
         required: true
         schema:
           type: string
@@ -1090,7 +1177,42 @@ paths:
         in: path
         name: payment_uuid
         description: ''
-        example: 019f0703-6050-71db-8dbe-ffb26703aaf2
+        example: 019f0749-a35e-7266-b158-0489259295df
+        required: true
+        schema:
+          type: string
+  '/api/v1/member/payments/{payment_uuid}/refund':
+    post:
+      summary: ''
+      operationId: postApiV1MemberPaymentsPayment_uuidRefund
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Payments'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: ''
+                  example: 4326.41688
+                  nullable: true
+                reason:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: m
+                  nullable: true
+    parameters:
+      -
+        in: path
+        name: payment_uuid
+        description: ''
+        example: 019f0749-a35e-7266-b158-0489259295df
         required: true
         schema:
           type: string

@@ -24,4 +24,9 @@ class PaymentPolicy
     {
         return $payment->order->member_id === $member->id;
     }
+
+    public function refund(Member $member, Payment $payment): bool
+    {
+        return $payment->order->member_id === $member->id;
+    }
 }

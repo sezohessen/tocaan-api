@@ -66,5 +66,16 @@ return [
     'actions' => [
         'retry' => 'Retry',
         'retried' => 'Webhook re-queued for processing.',
+        'confirm' => 'Confirm',
+        'cancel' => 'Cancel',
+        'confirmed' => 'Order confirmed.',
+        'cancelled' => 'Order cancelled.',
+        'refund' => 'Refund',
+        'refunded' => 'Refund issued.',
+        'edit_totals' => 'Edit totals',
+        'updated' => 'Order updated.',
+        'amount' => 'Amount (leave empty for full refund)',
+        'reason' => 'Reason',
+        'failed' => 'Action failed: :message',
     ],
 ];

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Events\PaymentFailed;
+use App\Events\PaymentRefunded;
 use App\Events\PaymentSucceeded;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
@@ -27,6 +28,16 @@ class SendPaymentNotification implements ShouldQueue
         Log::warning('Payment failed', [
             'payment' => $event->payment->uuid,
             'order' => $event->payment->order_id,
+        ]);
+    }
+
+    public function handleRefunded(PaymentRefunded $event): void
+    {
+        Log::info('Payment refunded', [
+            'payment' => $event->payment->uuid,
+            'refund' => $event->refund->uuid,
+            'amount' => $event->refund->amount,
+            'fully_refunded' => $event->fullyRefunded,
         ]);
     }
 }

@@ -8,18 +8,24 @@ use App\Data\CreateOrderData;
 use App\Data\OrderItemData;
 use App\Enums\OrderStatus;
 use App\Events\OrderCreated;
-use App\Exceptions\CartException;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\Inventory\InventoryManager;
+use App\Services\Pricing\PriceCalculator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class CreateOrderAction
 {
+    public function __construct(
+        private readonly InventoryManager $inventory,
+        private readonly PriceCalculator $pricing,
+    ) {}
+
     public function execute(CreateOrderData $data): Order
     {
         $order = DB::transaction(function () use ($data): Order {
-            $products = $this->resolveProducts($data);
+            $products = $this->inventory->reserve($this->quantities($data));
 
             $order = Order::create([
                 'member_id' => $data->memberId,
@@ -40,24 +46,18 @@ class CreateOrderAction
     }
 
     /**
-     * @return Collection<int, Product>
+     * @return array<int, int>
      */
-    private function resolveProducts(CreateOrderData $data): Collection
+    private function quantities(CreateOrderData $data): array
     {
-        $ids = collect($data->items->items())->map(fn (OrderItemData $item) => $item->productId);
-
-        $products = Product::query()->whereIn('id', $ids)->get()->keyBy('id');
+        $quantities = [];
 
         /** @var OrderItemData $item */
         foreach ($data->items as $item) {
-            $product = $products->get($item->productId);
-
-            if (! $product || ! $product->isAvailable($item->quantity)) {
-                throw CartException::productUnavailable($product ?? new Product(['name' => "#{$item->productId}"]));
-            }
+            $quantities[$item->productId] = ($quantities[$item->productId] ?? 0) + $item->quantity;
         }
 
-        return $products;
+        return $quantities;
     }
 
     /**
@@ -75,8 +75,6 @@ class CreateOrderAction
                 'quantity' => $item->quantity,
                 'unit_price' => $product->price,
             ]);
-
-            $product->decrement('stock', $item->quantity);
         }
     }
 
@@ -84,11 +82,8 @@ class CreateOrderAction
     {
         $subtotal = (float) $order->items()->sum('total');
 
-        $order->forceFill([
-            'subtotal' => $subtotal,
-            'tax' => $tax,
-            'discount' => $discount,
-            'total' => round($subtotal + $tax - $discount, 2),
-        ])->save();
+        $pricing = $this->pricing->calculate($subtotal, $tax, $discount, $order->currency);
+
+        $order->forceFill($pricing->toArray())->save();
     }
 }

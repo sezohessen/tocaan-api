@@ -45,4 +45,5 @@ Route::middleware('auth:member-api')->group(function (): void {
 
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show'])->can('view', 'payment');
+    Route::post('payments/{payment}/refund', [PaymentController::class, 'refund'])->can('refund', 'payment');
 });

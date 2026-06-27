@@ -18,7 +18,7 @@ class OrderInfolist
                 ->columns(3)
                 ->schema([
                     TextEntry::make('uuid')->label(__('tocaan.fields.uuid'))->copyable(),
-                    TextEntry::make('user.name')->label(__('tocaan.fields.customer')),
+                    TextEntry::make('member.name')->label(__('tocaan.fields.customer')),
                     TextEntry::make('status')->label(__('tocaan.fields.status'))->badge(),
                     TextEntry::make('subtotal')->label(__('tocaan.fields.subtotal'))->money(fn ($record) => $record->currency),
                     TextEntry::make('tax')->label(__('tocaan.fields.tax'))->money(fn ($record) => $record->currency),

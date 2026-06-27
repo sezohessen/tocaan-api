@@ -9,6 +9,7 @@ use App\Events\MemberRegistered;
 use App\Events\OrderConfirmed;
 use App\Events\OrderCreated;
 use App\Events\PaymentFailed;
+use App\Events\PaymentRefunded;
 use App\Events\PaymentSucceeded;
 use App\Events\UserRegistered;
 use App\Listeners\Cart\CreateOrderFromCart;
@@ -48,6 +49,9 @@ class PaymentEventSubscriber
             ],
             PaymentFailed::class => [
                 [SendPaymentNotification::class, 'handleFailed'],
+            ],
+            PaymentRefunded::class => [
+                [SendPaymentNotification::class, 'handleRefunded'],
             ],
         ];
     }

@@ -4,7 +4,7 @@ A clean, extensible Laravel API for managing a product catalog, carts, orders, a
 payments. New payment gateways drop in with a single class plus one config line
 (strategy + driver-manager pattern). Separate Member (customer) and User (admin) JWT
 guards, idempotent order creation, dedicated filter classes, secured with JWT, fully
-validated, tested (67 feature/unit tests, PHPStan level 5 clean), and documented
+validated, tested (119 feature/unit tests, PHPStan level 5 clean), and documented
 (OpenAPI + Postman, importable into Apidog).
 
 ## Tech stack
@@ -130,7 +130,7 @@ curl http://tocaan.test/api/v1/admin/orders -H "Authorization: Bearer $ADMIN_TOK
 | Products | `GET /products`, `GET /products/{id}` (read-only) |
 | Cart | `GET /cart`, `POST /cart/items`, `DELETE /cart/items/{product}`, `POST /cart/checkout` (pays + creates order) |
 | Orders | `GET/POST /orders`, `GET/PUT/DELETE /orders/{uuid}`, `POST /orders/{uuid}/confirm`, `POST /orders/{uuid}/cancel` |
-| Payments | `GET /orders/{uuid}/payments`, `POST /orders/{uuid}/payments`, `GET /payments`, `GET /payments/{uuid}` |
+| Payments | `GET /orders/{uuid}/payments`, `POST /orders/{uuid}/payments`, `GET /payments`, `GET /payments/{uuid}`, `POST /payments/{uuid}/refund` |
 
 ### Admin endpoints (`/api/v1/admin`, guard `api`, permission-gated)
 
@@ -139,8 +139,8 @@ curl http://tocaan.test/api/v1/admin/orders -H "Authorization: Bearer $ADMIN_TOK
 | Auth | `POST /auth/login`, `GET /auth/me`, `POST /auth/refresh`, `POST /auth/logout` | — |
 | Products | `GET /products`, `GET /products/{id}` | `products.view` |
 | Products | `POST /products`, `PUT/DELETE /products/{id}` | `products.manage` |
-| Orders | `GET /orders`, `GET /orders/{uuid}`, `GET /orders/{uuid}/payments` | `orders.view` |
-| Payments | `GET /payments`, `GET /payments/{uuid}` | `payments.view` |
+| Orders | `GET /orders`, `GET /orders/{uuid}`, `PUT /orders/{uuid}`, `GET /orders/{uuid}/payments` | `orders.view` |
+| Payments | `GET /payments`, `GET /payments/{uuid}`, `POST /payments/{uuid}/refund` | `payments.view` |
 
 Roles seeded on the `api` guard: **admin** (all permissions), **manager** (view-only).
 
@@ -153,6 +153,33 @@ Roles seeded on the `api` guard: **admin** (all permissions), **manager** (view-
 Business rules:
 - Payments can only be processed for **confirmed** orders.
 - Orders **cannot be deleted** if they have associated payments.
+
+### Refunds (gateway strategy extension)
+
+Refunds use an **opt-in `Refundable` interface** — a gateway supports refunds only if it
+implements it (`CreditCardGateway`, `PaypalGateway` do). `RefundPaymentAction` locks the
+payment, validates the amount against the refundable balance, calls the gateway, records an
+`OrderRefund`, and flips the order to **refunded** once fully refunded. Supports partial +
+repeated refunds; rejects over-refunds (422) and non-refundable gateways (422).
+
+```bash
+curl -X POST http://tocaan.test/api/v1/member/payments/{uuid}/refund -H "Authorization: Bearer $TOKEN" -d 'amount=25'
+curl -X POST http://tocaan.test/api/v1/admin/payments/{uuid}/refund -H "Authorization: Bearer $ADMIN_TOKEN"
+```
+
+### Admin order management
+
+`PUT /api/v1/admin/orders/{uuid}` edits any order's totals. The **Filament panel** order page
+exposes Confirm / Cancel (state-guarded) + Edit Totals; the payment page exposes a Refund
+action (shown only when the gateway is refundable and a balance remains).
+
+### Concurrency & pricing internals
+
+- **Inventory safety**: stock is reserved through an `InventoryManager` that `lockForUpdate`s
+  product rows, re-checks availability under the lock, then decrements — preventing oversell
+  under concurrent checkouts.
+- **Pricing pipeline**: totals are computed by a `PriceCalculator` running a Laravel `Pipeline`
+  of stages (`ApplyTax` → `ApplyDiscount`). New rules (coupons, shipping) slot in as a stage.
 
 ### Filtering & sorting
 
@@ -267,7 +294,7 @@ Switch language (English ⇄ Arabic, with RTL) using the toggle in the panel hea
 ## Testing
 
 ```bash
-php artisan test                  # 65 tests
+php artisan test                  # 119 tests
 vendor/bin/pint --test            # code style
 vendor/bin/phpstan analyse        # static analysis (Larastan)
 ```
@@ -277,6 +304,12 @@ touch your MySQL dev data.
 
 ## Assumptions & notes
 
+- **Product catalog (deliberate deviation)**: the task describes free-form items
+  (`product_name`, `quantity`, `price`). We instead model a **product catalog** and accept
+  `product_id` + `quantity`, pricing **server-side** from the catalog. This is a conscious
+  senior choice for data integrity and security (clients can't set their own prices) and to
+  showcase catalog ↔ order snapshotting — order items still store the name + price captured
+  at purchase time, so order history stays immutable.
 - **Single-tenant**: there is no multi-tenancy layer.
 - **Simulated gateways**: `CreditCardGateway` and `PaypalGateway` simulate processing
   (they don't call real APIs) so the flow is testable end-to-end. Swap in real SDK calls

@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Tocaan API Documentation",
-        "_postman_id": "1b1afb93-d45f-4ffe-be6c-117872e026f5",
+        "_postman_id": "bc99e5b2-8b11-46c0-9c44-2de6f1347358",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -221,7 +221,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -261,6 +261,42 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "Update any order (admin)",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/orders\/:order_uuid",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/orders\/:order_uuid",
+                            "variable": [
+                                {
+                                    "id": "order_uuid",
+                                    "key": "order_uuid",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"currency\":\"bng\",\"tax\":12,\"discount\":77,\"items\":[{\"product_name\":\"i\",\"quantity\":43,\"price\":60}]}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
                 }
             ]
         },
@@ -280,7 +316,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -391,7 +427,7 @@
                                 {
                                     "id": "payment_uuid",
                                     "key": "payment_uuid",
-                                    "value": "019f0703-6050-71db-8dbe-ffb26703aaf2",
+                                    "value": "019f0749-a35e-7266-b158-0489259295df",
                                     "description": ""
                                 }
                             ]
@@ -431,6 +467,42 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "POST api\/v1\/admin\/payments\/{payment_uuid}\/refund",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/admin\/payments\/:payment_uuid\/refund",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/admin\/payments\/:payment_uuid\/refund",
+                            "variable": [
+                                {
+                                    "id": "payment_uuid",
+                                    "key": "payment_uuid",
+                                    "value": "019f0749-a35e-7266-b158-0489259295df",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"amount\":4326.41688,\"reason\":\"m\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
                 }
             ]
         },
@@ -571,7 +643,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":true}"
+                            "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":false}"
                         },
                         "description": ""
                     },
@@ -607,7 +679,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":false}"
+                            "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":true}"
                         },
                         "description": ""
                     },
@@ -1252,7 +1324,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1305,7 +1377,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1341,7 +1413,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1374,7 +1446,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1407,7 +1479,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1446,7 +1518,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1499,7 +1571,7 @@
                                 {
                                     "id": "order_uuid",
                                     "key": "order_uuid",
-                                    "value": "019f0703-6041-7340-ba1d-c3bb782bbc1c",
+                                    "value": "019f0749-a351-731e-9264-280e96308d52",
                                     "description": ""
                                 }
                             ]
@@ -1517,7 +1589,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"method\":\"paypal\"}"
+                            "raw": "{\"method\":\"credit_card\"}"
                         },
                         "description": ""
                     },
@@ -1580,7 +1652,7 @@
                                 {
                                     "id": "payment_uuid",
                                     "key": "payment_uuid",
-                                    "value": "019f0703-6050-71db-8dbe-ffb26703aaf2",
+                                    "value": "019f0749-a35e-7266-b158-0489259295df",
                                     "description": ""
                                 }
                             ]
@@ -1620,6 +1692,42 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "POST api\/v1\/member\/payments\/{payment_uuid}\/refund",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/member\/payments\/:payment_uuid\/refund",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/member\/payments\/:payment_uuid\/refund",
+                            "variable": [
+                                {
+                                    "id": "payment_uuid",
+                                    "key": "payment_uuid",
+                                    "value": "019f0749-a35e-7266-b158-0489259295df",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"amount\":4326.41688,\"reason\":\"m\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": []
                 }
             ]
         }

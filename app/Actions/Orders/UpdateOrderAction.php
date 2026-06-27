@@ -9,11 +9,14 @@ use App\Data\UpdateOrderData;
 use App\Exceptions\CartException;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\Pricing\PriceCalculator;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelData\Optional;
 
 class UpdateOrderAction
 {
+    public function __construct(private readonly PriceCalculator $pricing) {}
+
     public function execute(Order $order, UpdateOrderData $data): Order
     {
         return DB::transaction(function () use ($order, $data): Order {
@@ -75,9 +78,13 @@ class UpdateOrderAction
     {
         $subtotal = (float) $order->items()->sum('total');
 
-        $order->forceFill([
-            'subtotal' => $subtotal,
-            'total' => round($subtotal + (float) $order->tax - (float) $order->discount, 2),
-        ])->save();
+        $pricing = $this->pricing->calculate(
+            $subtotal,
+            (float) $order->tax,
+            (float) $order->discount,
+            $order->currency,
+        );
+
+        $order->forceFill($pricing->toArray())->save();
     }
 }

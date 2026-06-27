@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Payments\Gateways;
 
 use App\Models\Payment;
+use App\Payments\Contracts\Refundable;
 use App\Payments\Results\ChargeResult;
+use App\Payments\Results\RefundResult;
 
-class PaypalGateway extends AbstractGateway
+class PaypalGateway extends AbstractGateway implements Refundable
 {
     public const NAME = 'paypal';
 
@@ -31,6 +33,19 @@ class PaypalGateway extends AbstractGateway
             'amount' => (float) $payment->amount,
             'currency' => $payment->currency,
             'capture_status' => 'COMPLETED',
+        ]);
+    }
+
+    public function refund(Payment $payment, float $amount): RefundResult
+    {
+        $this->requireConfig(['client_id', 'secret']);
+
+        $reference = 'pp_re_'.bin2hex(random_bytes(8));
+
+        return RefundResult::successful($this->name(), $amount, $reference, [
+            'gateway' => $this->name(),
+            'original_reference' => $payment->gateway_reference,
+            'amount' => $amount,
         ]);
     }
 }

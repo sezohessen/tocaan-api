@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Models\Payment;
+use App\Models\OrderRefund;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Payment
+ * @mixin OrderRefund
  */
-class PaymentResource extends JsonResource
+class RefundResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -20,18 +20,12 @@ class PaymentResource extends JsonResource
     {
         return [
             'id' => $this->uuid,
-            'order_id' => $this->whenLoaded('order', fn () => $this->order->uuid),
-            'status' => $this->status->value,
-            'status_label' => $this->status->label(),
-            'gateway' => $this->gateway,
-            'method' => $this->method,
+            'payment_id' => $this->whenLoaded('payment', fn () => $this->payment->uuid),
             'amount' => (float) $this->amount,
             'currency' => $this->currency,
+            'gateway' => $this->gateway,
             'gateway_reference' => $this->gateway_reference,
-            'refunded_amount' => $this->refundedAmount(),
-            'refundable_amount' => $this->refundableAmount(),
-            'is_fully_refunded' => $this->isFullyRefunded(),
-            'refunds' => RefundResource::collection($this->whenLoaded('refunds')),
+            'reason' => $this->reason,
             'processed_at' => $this->processed_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];

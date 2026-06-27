@@ -21,7 +21,7 @@ class OrdersTable
                     ->limit(13)
                     ->copyable()
                     ->searchable(),
-                TextColumn::make('user.name')
+                TextColumn::make('member.name')
                     ->label(__('tocaan.fields.customer'))
                     ->searchable(),
                 TextColumn::make('status')

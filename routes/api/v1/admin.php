@@ -33,11 +33,13 @@ Route::middleware('auth:api')->group(function (): void {
     Route::middleware('permission:orders.view')->group(function (): void {
         Route::get('orders', [OrderController::class, 'index']);
         Route::get('orders/{order}', [OrderController::class, 'show']);
+        Route::put('orders/{order}', [OrderController::class, 'update']);
         Route::get('orders/{order}/payments', [PaymentController::class, 'forOrder']);
     });
 
     Route::middleware('permission:payments.view')->group(function (): void {
         Route::get('payments', [PaymentController::class, 'index']);
         Route::get('payments/{payment}', [PaymentController::class, 'show']);
+        Route::post('payments/{payment}/refund', [PaymentController::class, 'refund']);
     });
 });

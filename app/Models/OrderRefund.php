@@ -4,58 +4,43 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\PaymentStatus;
-use App\Filters\PaymentFilter;
-use App\Models\Concerns\AuditsDeletions;
-use Database\Factories\PaymentFactory;
-use EloquentFilter\Filterable;
+use Database\Factories\OrderRefundFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string $uuid
  * @property int $order_id
- * @property PaymentStatus $status
- * @property string $gateway
- * @property string|null $method
+ * @property int $payment_id
  * @property float $amount
  * @property string $currency
+ * @property string $gateway
  * @property string|null $gateway_reference
+ * @property string|null $reason
  * @property array<string, mixed>|null $gateway_response
  * @property Carbon|null $processed_at
- * @property-read Order $order
+ * @property-read Payment $payment
  */
-class Payment extends Model
+class OrderRefund extends Model
 {
-    use AuditsDeletions;
-    use Filterable;
-
-    /** @use HasFactory<PaymentFactory> */
+    /** @use HasFactory<OrderRefundFactory> */
     use HasFactory;
 
     use HasUuids;
-    use SoftDeletes;
-
-    public function modelFilter(): string
-    {
-        return PaymentFilter::class;
-    }
 
     protected $fillable = [
         'uuid',
         'order_id',
-        'status',
-        'gateway',
-        'method',
+        'payment_id',
         'amount',
         'currency',
+        'gateway',
         'gateway_reference',
+        'reason',
         'gateway_response',
         'processed_at',
     ];
@@ -74,7 +59,6 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
-            'status' => PaymentStatus::class,
             'amount' => 'decimal:2',
             'gateway_response' => 'array',
             'processed_at' => 'datetime',
@@ -86,29 +70,9 @@ class Payment extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function refunds(): HasMany
+    public function payment(): BelongsTo
     {
-        return $this->hasMany(OrderRefund::class);
-    }
-
-    public function isSuccessful(): bool
-    {
-        return $this->status === PaymentStatus::Successful;
-    }
-
-    public function refundedAmount(): float
-    {
-        return (float) $this->refunds()->sum('amount');
-    }
-
-    public function refundableAmount(): float
-    {
-        return round((float) $this->amount - $this->refundedAmount(), 2);
-    }
-
-    public function isFullyRefunded(): bool
-    {
-        return $this->refundableAmount() <= 0;
+        return $this->belongsTo(Payment::class);
     }
 
     public function getRouteKeyName(): string
