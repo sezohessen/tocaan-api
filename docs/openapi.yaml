@@ -1,0 +1,1096 @@
+openapi: 3.0.3
+info:
+  title: 'Tocaan API Documentation'
+  description: ''
+  version: 1.0.0
+servers:
+  - url: 'http://tocaan.test'
+tags:
+  - name: 'Admin Authentication'
+    description: ''
+  - name: 'Admin Orders'
+    description: ''
+  - name: 'Admin Payments'
+    description: ''
+  - name: 'Admin Products'
+    description: ''
+  - name: Catalog
+    description: ''
+  - name: Endpoints
+    description: ''
+  - name: 'Member Authentication'
+    description: ''
+  - name: 'Member Cart'
+    description: ''
+  - name: 'Member Orders'
+    description: ''
+  - name: 'Member Payments'
+    description: ''
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'Obtain a JWT by calling <code>POST /api/v1/auth/login</code> or <code>POST /api/v1/auth/register</code>, then send it as <code>Authorization: Bearer {token}</code>.'
+security:
+  -
+    default: []
+paths:
+  /api/v1/admin/auth/login:
+    post:
+      summary: 'Login as an admin'
+      operationId: loginAsAnAdmin
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: gbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+              required:
+                - email
+                - password
+      security: []
+  /api/v1/admin/auth/me:
+    get:
+      summary: 'Current admin'
+      operationId: currentAdmin
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Authentication'
+  /api/v1/admin/auth/refresh:
+    post:
+      summary: 'Refresh token'
+      operationId: refreshToken
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Authentication'
+  /api/v1/admin/auth/logout:
+    post:
+      summary: Logout
+      operationId: logout
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Authentication'
+  /api/v1/admin/orders:
+    get:
+      summary: 'List all orders'
+      operationId: listAllOrders
+      description: ''
+      parameters:
+        -
+          in: query
+          name: status
+          description: 'Filter by status.'
+          example: confirmed
+          required: false
+          schema:
+            type: string
+            description: 'Filter by status.'
+            example: confirmed
+        -
+          in: query
+          name: 'sort_by[total]'
+          description: 'Sort by a column (asc|desc).'
+          example: desc
+          required: false
+          schema:
+            type: string
+            description: 'Sort by a column (asc|desc).'
+            example: desc
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Orders'
+  '/api/v1/admin/orders/{order_uuid}':
+    get:
+      summary: ''
+      operationId: getApiV1AdminOrdersOrder_uuid
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Orders'
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  '/api/v1/admin/orders/{order_uuid}/payments':
+    get:
+      summary: ''
+      operationId: getApiV1AdminOrdersOrder_uuidPayments
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Payments'
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  /api/v1/admin/payments:
+    get:
+      summary: 'List all payments'
+      operationId: listAllPayments
+      description: ''
+      parameters:
+        -
+          in: query
+          name: status
+          description: 'Filter by status.'
+          example: successful
+          required: false
+          schema:
+            type: string
+            description: 'Filter by status.'
+            example: successful
+        -
+          in: query
+          name: gateway
+          description: 'Filter by gateway.'
+          example: credit_card
+          required: false
+          schema:
+            type: string
+            description: 'Filter by gateway.'
+            example: credit_card
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Payments'
+  '/api/v1/admin/payments/{payment_uuid}':
+    get:
+      summary: ''
+      operationId: getApiV1AdminPaymentsPayment_uuid
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Payments'
+    parameters:
+      -
+        in: path
+        name: payment_uuid
+        description: ''
+        example: 019f0703-6050-71db-8dbe-ffb26703aaf2
+        required: true
+        schema:
+          type: string
+  /api/v1/admin/products:
+    get:
+      summary: 'List products'
+      operationId: listProducts
+      description: ''
+      parameters:
+        -
+          in: query
+          name: name
+          description: 'Filter by partial name.'
+          example: keyboard
+          required: false
+          schema:
+            type: string
+            description: 'Filter by partial name.'
+            example: keyboard
+        -
+          in: query
+          name: is_active
+          description: 'Filter by active flag.'
+          example: true
+          required: false
+          schema:
+            type: boolean
+            description: 'Filter by active flag.'
+            example: true
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Products'
+    post:
+      summary: ''
+      operationId: postApiV1AdminProducts
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Products'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                sku:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                price:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 60
+                currency:
+                  type: string
+                  description: 'Must be 3 characters.'
+                  example: dlj
+                stock:
+                  type: integer
+                  description: 'Must be at least 0.'
+                  example: 52
+                is_active:
+                  type: boolean
+                  description: ''
+                  example: true
+              required:
+                - name
+                - sku
+                - price
+                - stock
+  '/api/v1/admin/products/{product_id}':
+    get:
+      summary: ''
+      operationId: getApiV1AdminProductsProduct_id
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Admin Products'
+    put:
+      summary: ''
+      operationId: putApiV1AdminProductsProduct_id
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Products'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                sku:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: 'n'
+                description:
+                  type: string
+                  description: ''
+                  example: 'Eius et animi quos velit et.'
+                  nullable: true
+                price:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 60
+                currency:
+                  type: string
+                  description: 'Must be 3 characters.'
+                  example: dlj
+                stock:
+                  type: integer
+                  description: 'Must be at least 0.'
+                  example: 52
+                is_active:
+                  type: boolean
+                  description: ''
+                  example: false
+    delete:
+      summary: ''
+      operationId: deleteApiV1AdminProductsProduct_id
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Admin Products'
+    parameters:
+      -
+        in: path
+        name: product_id
+        description: 'The ID of the product.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  /api/v1/member/products:
+    get:
+      summary: 'Browse the catalog'
+      operationId: browseTheCatalog
+      description: 'Paginated list of active products.'
+      parameters:
+        -
+          in: query
+          name: name
+          description: 'Filter by partial name.'
+          example: keyboard
+          required: false
+          schema:
+            type: string
+            description: 'Filter by partial name.'
+            example: keyboard
+        -
+          in: query
+          name: 'sort_by[price]'
+          description: 'Sort by a column (asc|desc).'
+          example: asc
+          required: false
+          schema:
+            type: string
+            description: 'Sort by a column (asc|desc).'
+            example: asc
+        -
+          in: query
+          name: per_page
+          description: 'Items per page.'
+          example: 15
+          required: false
+          schema:
+            type: integer
+            description: 'Items per page.'
+            example: 15
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Catalog
+  '/api/v1/member/products/{product_id}':
+    get:
+      summary: ''
+      operationId: getApiV1MemberProductsProduct_id
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Catalog
+    parameters:
+      -
+        in: path
+        name: product_id
+        description: 'The ID of the product.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  /api/v1/up:
+    get:
+      summary: ''
+      operationId: getApiV1Up
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  status: ok
+                properties:
+                  status:
+                    type: string
+                    example: ok
+      tags:
+        - Endpoints
+  /api/v1/webhooks/payments:
+    post:
+      summary: ''
+      operationId: postApiV1WebhooksPayments
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - Endpoints
+  /api/v1/member/auth/register:
+    post:
+      summary: 'Register a member'
+      operationId: registerAMember
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: b
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: zbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+                phone:
+                  type: string
+                  description: 'Must not be greater than 32 characters.'
+                  example: v
+                  nullable: true
+              required:
+                - name
+                - email
+                - password
+      security: []
+  /api/v1/member/auth/login:
+    post:
+      summary: 'Login as a member'
+      operationId: loginAsAMember
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: gbailey@example.net
+                password:
+                  type: string
+                  description: ''
+                  example: '|]|{+-'
+              required:
+                - email
+                - password
+      security: []
+  /api/v1/member/auth/me:
+    get:
+      summary: 'Current member'
+      operationId: currentMember
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Authentication'
+  /api/v1/member/auth/refresh:
+    post:
+      summary: 'Refresh token'
+      operationId: refreshToken
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Authentication'
+  /api/v1/member/auth/logout:
+    post:
+      summary: Logout
+      operationId: logout
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Authentication'
+  /api/v1/member/cart:
+    get:
+      summary: 'Get current cart'
+      operationId: getCurrentCart
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Cart'
+  /api/v1/member/cart/items:
+    post:
+      summary: 'Add item to cart'
+      operationId: addItemToCart
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Cart'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  description: 'An existing product id.'
+                  example: 1
+                quantity:
+                  type: integer
+                  description: 'Quantity to add.'
+                  example: 2
+              required:
+                - product_id
+                - quantity
+  '/api/v1/member/cart/items/{product_id}':
+    delete:
+      summary: ''
+      operationId: deleteApiV1MemberCartItemsProduct_id
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Cart'
+    parameters:
+      -
+        in: path
+        name: product_id
+        description: 'The ID of the product.'
+        example: 1
+        required: true
+        schema:
+          type: integer
+  /api/v1/member/cart/checkout:
+    post:
+      summary: ''
+      operationId: postApiV1MemberCartCheckout
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Cart'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: ''
+                  example: paypal
+                  enum:
+                    - credit_card
+                    - paypal
+                tax:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 27
+                discount:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 39
+              required:
+                - method
+  /api/v1/member/orders:
+    get:
+      summary: 'List my orders'
+      operationId: listMyOrders
+      description: ''
+      parameters:
+        -
+          in: query
+          name: status
+          description: 'Filter by status (pending, confirmed, cancelled, refunded).'
+          example: confirmed
+          required: false
+          schema:
+            type: string
+            description: 'Filter by status (pending, confirmed, cancelled, refunded).'
+            example: confirmed
+        -
+          in: query
+          name: 'sort_by[total]'
+          description: 'Sort by a column (asc|desc).'
+          example: desc
+          required: false
+          schema:
+            type: string
+            description: 'Sort by a column (asc|desc).'
+            example: desc
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Orders'
+    post:
+      summary: ''
+      operationId: postApiV1MemberOrders
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Orders'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  description: 'Must be 3 characters.'
+                  example: bng
+                tax:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 12
+                discount:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 77
+                meta:
+                  type: object
+                  description: ''
+                  example: null
+                  properties: {}
+                  nullable: true
+                items:
+                  type: array
+                  description: 'Must have at least 1 items.'
+                  example:
+                    - []
+                  items:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                        description: 'Must match an existing stored value.'
+                        example: 16
+                      quantity:
+                        type: integer
+                        description: 'Must be at least 1.'
+                        example: 22
+                    required:
+                      - product_id
+                      - quantity
+              required:
+                - items
+  '/api/v1/member/orders/{order_uuid}':
+    get:
+      summary: ''
+      operationId: getApiV1MemberOrdersOrder_uuid
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Orders'
+    put:
+      summary: ''
+      operationId: putApiV1MemberOrdersOrder_uuid
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Orders'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                  description: 'Must be 3 characters.'
+                  example: bng
+                tax:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 12
+                discount:
+                  type: number
+                  description: 'Must be at least 0.'
+                  example: 77
+                meta:
+                  type: object
+                  description: ''
+                  example: null
+                  properties: {}
+                  nullable: true
+                items:
+                  type: array
+                  description: 'Must have at least 1 items.'
+                  example: null
+                  items:
+                    type: object
+                    properties:
+                      product_name:
+                        type: string
+                        description: 'This field is required when <code>items</code> is present. Must not be greater than 255 characters.'
+                        example: i
+                      quantity:
+                        type: integer
+                        description: 'This field is required when <code>items</code> is present. Must be at least 1.'
+                        example: 43
+                      price:
+                        type: number
+                        description: 'This field is required when <code>items</code> is present. Must be at least 0.'
+                        example: 60
+    delete:
+      summary: ''
+      operationId: deleteApiV1MemberOrdersOrder_uuid
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Orders'
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  '/api/v1/member/orders/{order_uuid}/confirm':
+    post:
+      summary: ''
+      operationId: postApiV1MemberOrdersOrder_uuidConfirm
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Orders'
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  '/api/v1/member/orders/{order_uuid}/cancel':
+    post:
+      summary: ''
+      operationId: postApiV1MemberOrdersOrder_uuidCancel
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Orders'
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  '/api/v1/member/orders/{order_uuid}/payments':
+    get:
+      summary: ''
+      operationId: getApiV1MemberOrdersOrder_uuidPayments
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Payments'
+    post:
+      summary: ''
+      operationId: postApiV1MemberOrdersOrder_uuidPayments
+      description: ''
+      parameters: []
+      responses: {}
+      tags:
+        - 'Member Payments'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method:
+                  type: string
+                  description: ''
+                  example: paypal
+                  enum:
+                    - credit_card
+                    - paypal
+                details:
+                  type: object
+                  description: ''
+                  example: null
+                  properties: {}
+                  nullable: true
+              required:
+                - method
+    parameters:
+      -
+        in: path
+        name: order_uuid
+        description: ''
+        example: 019f0703-6041-7340-ba1d-c3bb782bbc1c
+        required: true
+        schema:
+          type: string
+  /api/v1/member/payments:
+    get:
+      summary: 'List my payments'
+      operationId: listMyPayments
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Payments'
+  '/api/v1/member/payments/{payment_uuid}':
+    get:
+      summary: ''
+      operationId: getApiV1MemberPaymentsPayment_uuid
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'Member Payments'
+    parameters:
+      -
+        in: path
+        name: payment_uuid
+        description: ''
+        example: 019f0703-6050-71db-8dbe-ffb26703aaf2
+        required: true
+        schema:
+          type: string

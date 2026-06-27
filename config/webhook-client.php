@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\ProcessGatewayWebhookJob;
 use Spatie\WebhookClient\Models\WebhookCall;
 use Spatie\WebhookClient\SignatureValidator\DefaultSignatureValidator;
 use Spatie\WebhookClient\WebhookProfile\ProcessEverythingWebhookProfile;
@@ -70,7 +71,7 @@ return [
              *
              * This should be set to a class that extends \Spatie\WebhookClient\Jobs\ProcessWebhookJob.
              */
-            'process_webhook_job' => '',
+            'process_webhook_job' => ProcessGatewayWebhookJob::class,
         ],
     ],
 

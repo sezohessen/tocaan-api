@@ -25,3 +25,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Scribe build artifacts (run `php artisan scribe:generate`; committed deliverables live in /docs)
+/.scribe
+/resources/views/scribe
+/public/vendor/scribe
+/storage/app/private/scribe
