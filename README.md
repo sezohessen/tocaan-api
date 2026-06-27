@@ -4,12 +4,12 @@ A clean, extensible Laravel API for managing a product catalog, carts, orders, a
 payments. New payment gateways drop in with a single class plus one config line
 (strategy + driver-manager pattern). Separate Member (customer) and User (admin) JWT
 guards, idempotent order creation, dedicated filter classes, secured with JWT, fully
-validated, tested (65 feature/unit tests, PHPStan level 5 clean), and documented
+validated, tested (67 feature/unit tests, PHPStan level 5 clean), and documented
 (OpenAPI + Postman, importable into Apidog).
 
 ## Tech stack
 
-- **Laravel 13** (PHP 8.3+)
+- **Laravel 13** (PHP 8.4+)
 - **JWT auth** — `tymon/jwt-auth`
 - **DTOs** — `spatie/laravel-data`
 - **Roles** — `spatie/laravel-permission`
@@ -75,7 +75,7 @@ Key design choices:
 
 ## Setup
 
-Requirements: PHP 8.3+, Composer, MySQL 8 (or compatible), Node (for Filament assets).
+Requirements: PHP 8.4+, Composer, MySQL 8 (or compatible), Node (for Filament assets).
 
 ```bash
 # 1. Install dependencies
