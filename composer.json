@@ -60,6 +60,11 @@
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
         ],
+        "docs:generate": [
+            "@php artisan scribe:generate",
+            "@php scripts/postman_postprocess.php",
+            "@php scripts/postman_push.php"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",

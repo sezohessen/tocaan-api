@@ -31,3 +31,7 @@ Thumbs.db
 /resources/views/scribe
 /public/vendor/scribe
 /storage/app/private/scribe
+
+/.postman/push-cache.json
+
+/.claude/

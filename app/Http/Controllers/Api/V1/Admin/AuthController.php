@@ -43,6 +43,7 @@ class AuthController extends Controller
     {
         /** @var User $user */
         $user = $this->guard()->user();
+        $user->loadMissing('roles.permissions', 'permissions');
 
         return response()->json(['data' => new UserResource($user)]);
     }
@@ -80,6 +81,8 @@ class AuthController extends Controller
 
     private function respondWithToken(string $token, User $user, int $status = 200): JsonResponse
     {
+        $user->loadMissing('roles.permissions', 'permissions');
+
         return response()->json([
             'data' => new UserResource($user),
             'access_token' => $token,
