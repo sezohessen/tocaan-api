@@ -60,6 +60,11 @@ class CartController extends Controller
         return CartResource::make($action->execute($cart, $product))->response()->setStatusCode(200);
     }
 
+    /**
+     * Checkout the cart
+     *
+     * @header Idempotency-Key A unique key to safely retry checkout without double-charging. Example: 1f9c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f
+     */
     public function checkout(CheckoutCartRequest $request, CheckoutCartAction $action): JsonResponse
     {
         /** @var Cart $cart */

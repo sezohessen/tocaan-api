@@ -47,6 +47,25 @@ $bearerAuth = static fn (string $token): array => [
     'bearer' => [['key' => 'token', 'value' => '{{'.$token.'}}', 'type' => 'string']],
 ];
 
+$idempotencyPreRequest = static fn (): array => [
+    'listen' => 'prerequest',
+    'script' => [
+        'type' => 'text/javascript',
+        'exec' => [
+            'pm.collectionVariables.set("idempotencyKey", pm.variables.replaceIn("{{$guid}}"));',
+        ],
+    ],
+];
+
+$idempotencyHeader = [
+    'key' => 'Idempotency-Key',
+    'value' => '{{idempotencyKey}}',
+    'type' => 'text',
+    'description' => 'Auto-generated per send; retry the same value to dedupe.',
+];
+
+$idempotentRequests = ['Checkout the cart'];
+
 $loginRequests = [
     'Login as an admin' => 'adminToken',
     'Login as a member' => 'memberToken',
@@ -80,6 +99,21 @@ foreach ($collection['item'] as $group) {
                     $loginBodies[$request['name']],
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
                 );
+            }
+            if (in_array($request['name'] ?? '', $idempotentRequests, true)) {
+                $headers = $request['request']['header'] ?? [];
+                $headers = array_values(array_filter(
+                    $headers,
+                    static fn ($h) => ($h['key'] ?? '') !== 'Idempotency-Key'
+                ));
+                $headers[] = $idempotencyHeader;
+                $request['request']['header'] = $headers;
+
+                $request['event'] = array_values(array_filter(
+                    $request['event'] ?? [],
+                    static fn ($e) => ($e['listen'] ?? '') !== 'prerequest'
+                ));
+                $request['event'][] = $idempotencyPreRequest();
             }
         }
         unset($request);

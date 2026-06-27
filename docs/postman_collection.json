@@ -8,7 +8,7 @@
     ],
     "info": {
         "name": "Tocaan API Documentation",
-        "_postman_id": "bc183c0b-c8f4-45db-a73f-ecb5f1e80bc8",
+        "_postman_id": "c4ee1178-7ad3-495a-b66a-60f3aa83ff80",
         "description": "",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
@@ -689,7 +689,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":false}"
+                                    "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":true}"
                                 },
                                 "description": ""
                             },
@@ -725,7 +725,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":false}"
+                                    "raw": "{\"name\":\"b\",\"sku\":\"n\",\"description\":\"Eius et animi quos velit et.\",\"price\":60,\"currency\":\"dlj\",\"stock\":52,\"is_active\":true}"
                                 },
                                 "description": ""
                             },
@@ -1105,7 +1105,7 @@
                             "response": []
                         },
                         {
-                            "name": "POST api/v1/member/cart/checkout",
+                            "name": "Checkout the cart",
                             "request": {
                                 "url": {
                                     "host": "{{baseUrl}}",
@@ -1122,6 +1122,12 @@
                                     {
                                         "key": "Accept",
                                         "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Idempotency-Key",
+                                        "value": "{{idempotencyKey}}",
+                                        "type": "text",
+                                        "description": "Auto-generated per send; retry the same value to dedupe."
                                     }
                                 ],
                                 "body": {
@@ -1130,7 +1136,18 @@
                                 },
                                 "description": ""
                             },
-                            "response": []
+                            "response": [],
+                            "event": [
+                                {
+                                    "listen": "prerequest",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.collectionVariables.set(\"idempotencyKey\", pm.variables.replaceIn(\"{{$guid}}\"));"
+                                        ]
+                                    }
+                                }
+                            ]
                         }
                     ],
                     "auth": {
@@ -1521,7 +1538,7 @@
                                 ],
                                 "body": {
                                     "mode": "raw",
-                                    "raw": "{\"method\":\"credit_card\"}"
+                                    "raw": "{\"method\":\"paypal\"}"
                                 },
                                 "description": ""
                             },
