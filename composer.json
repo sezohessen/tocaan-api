@@ -60,6 +60,9 @@
             "@php artisan config:clear --ansi @no_additional_args",
             "@php artisan test"
         ],
+        "lint": "pint",
+        "lint:test": "pint --test",
+        "stan": "phpstan analyse --no-progress --memory-limit=512M",
         "docs:generate": [
             "@php artisan scribe:generate",
             "@php scripts/postman_postprocess.php",

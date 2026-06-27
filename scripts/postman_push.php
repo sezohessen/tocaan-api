@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-$root = __DIR__ . '/..';
-$collectionFile = $root . '/postman/collections/tocaan-api.postman_collection.json';
-$envFile = $root . '/postman/environments/tocaan.postman_environment.json';
-$cacheFile = $root . '/.postman/push-cache.json';
+$root = __DIR__.'/..';
+$collectionFile = $root.'/postman/collections/tocaan-api.postman_collection.json';
+$envFile = $root.'/postman/environments/tocaan.postman_environment.json';
+$cacheFile = $root.'/.postman/push-cache.json';
 
 $readEnv = static function (string $key) use ($root): ?string {
     $env = getenv($key);
     if (is_string($env) && $env !== '') {
         return $env;
     }
-    $path = $root . '/.env';
+    $path = $root.'/.env';
     if (! file_exists($path)) {
         return null;
     }
@@ -39,7 +39,7 @@ $workspaceId = $readEnv('POSTMAN_WORKSPACE_ID');
 
 $request = static function (string $method, string $url, string $apiKey, ?array $body = null): array {
     $ch = curl_init($url);
-    $headers = ['X-API-Key: ' . $apiKey, 'Content-Type: application/json'];
+    $headers = ['X-API-Key: '.$apiKey, 'Content-Type: application/json'];
     curl_setopt_array($ch, [
         CURLOPT_CUSTOMREQUEST => $method,
         CURLOPT_RETURNTRANSFER => true,
@@ -85,12 +85,12 @@ $pushCollection = static function () use ($request, $apiKey, $workspaceId, $coll
 
             return;
         }
-        fwrite(STDERR, "Update failed ({$result['status']}), creating fresh. " . json_encode($result['body']) . "\n");
+        fwrite(STDERR, "Update failed ({$result['status']}), creating fresh. ".json_encode($result['body'])."\n");
     }
 
     $url = 'https://api.getpostman.com/collections';
     if ($workspaceId) {
-        $url .= '?workspace=' . $workspaceId;
+        $url .= '?workspace='.$workspaceId;
     }
     $result = $request('POST', $url, $apiKey, ['collection' => $collection]);
     if ($result['status'] === 200 || $result['status'] === 201) {
@@ -100,7 +100,7 @@ $pushCollection = static function () use ($request, $apiKey, $workspaceId, $coll
 
         return;
     }
-    fwrite(STDERR, "Collection push failed ({$result['status']}): " . json_encode($result['body']) . "\n");
+    fwrite(STDERR, "Collection push failed ({$result['status']}): ".json_encode($result['body'])."\n");
     exit(1);
 };
 
@@ -136,7 +136,7 @@ $pushEnvironment = static function () use ($request, $apiKey, $workspaceId, $env
 
     $url = 'https://api.getpostman.com/environments';
     if ($workspaceId) {
-        $url .= '?workspace=' . $workspaceId;
+        $url .= '?workspace='.$workspaceId;
     }
     $result = $request('POST', $url, $apiKey, ['environment' => $environment]);
     if ($result['status'] === 200 || $result['status'] === 201) {
@@ -144,7 +144,7 @@ $pushEnvironment = static function () use ($request, $apiKey, $workspaceId, $env
         file_put_contents($cacheFile, json_encode($cache, JSON_PRETTY_PRINT));
         fwrite(STDOUT, "Environment created in Postman (uid: {$cache['environmentUid']}).\n");
     } else {
-        fwrite(STDERR, "Environment push failed ({$result['status']}): " . json_encode($result['body']) . "\n");
+        fwrite(STDERR, "Environment push failed ({$result['status']}): ".json_encode($result['body'])."\n");
     }
 };
 
