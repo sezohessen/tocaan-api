@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Models\IdempotencyKey;
 use Closure;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureIdempotency
@@ -26,79 +25,86 @@ class EnsureIdempotency
             return $next($request);
         }
 
-        $scope = (string) ($request->route()?->getName() ?: $request->path());
+        $cacheKey = $this->cacheKey($request, (string) $key);
         $fingerprint = $this->fingerprint($request);
 
-        $record = $this->claim((string) $key, $scope, $fingerprint);
+        $claimed = Cache::add($cacheKey, [
+            'request_fingerprint' => $fingerprint,
+            'response_status' => null,
+            'response_body' => null,
+        ], $this->ttl());
 
-        if ($record->wasRecentlyCreated === false) {
-            return $this->handleExisting($record, $fingerprint);
+        if (! $claimed) {
+            return $this->handleExisting($cacheKey, (string) $key, $fingerprint);
         }
 
         $response = $next($request);
 
-        $this->persistResponse($record, $response);
+        $this->persistResponse($cacheKey, $fingerprint, $response);
 
         $response->headers->set(self::HEADER, (string) $key);
 
         return $response;
     }
 
-    private function claim(string $key, string $scope, string $fingerprint): IdempotencyKey
+    private function handleExisting(string $cacheKey, string $key, string $fingerprint): Response
     {
-        try {
-            $record = IdempotencyKey::create([
-                'key' => $key,
-                'scope' => $scope,
-                'request_fingerprint' => $fingerprint,
-            ]);
-            $record->wasRecentlyCreated = true;
+        /** @var array{request_fingerprint: string, response_status: int|null, response_body: array<string, mixed>|null}|null $record */
+        $record = Cache::get($cacheKey);
 
-            return $record;
-        } catch (QueryException) {
-            $record = IdempotencyKey::query()->where('scope', $scope)->where('key', $key)->firstOrFail();
-            $record->wasRecentlyCreated = false;
-
-            return $record;
-        }
-    }
-
-    private function handleExisting(IdempotencyKey $record, string $fingerprint): Response
-    {
-        if ($record->request_fingerprint !== $fingerprint) {
-            return response()->json([
-                'message' => __('This idempotency key was already used with different request parameters.'),
-            ], 422);
-        }
-
-        if (! $record->isCompleted()) {
+        if ($record === null) {
             return response()->json([
                 'message' => __('A request with this idempotency key is still being processed.'),
             ], 409);
         }
 
-        return response()->json($record->response_body, (int) $record->response_status)
-            ->header(self::HEADER, $record->key);
+        if ($record['request_fingerprint'] !== $fingerprint) {
+            return response()->json([
+                'message' => __('This idempotency key was already used with different request parameters.'),
+            ], 422);
+        }
+
+        if ($record['response_status'] === null) {
+            return response()->json([
+                'message' => __('A request with this idempotency key is still being processed.'),
+            ], 409);
+        }
+
+        return response()->json($record['response_body'], $record['response_status'])
+            ->header(self::HEADER, $key);
     }
 
-    private function persistResponse(IdempotencyKey $record, Response $response): void
+    private function persistResponse(string $cacheKey, string $fingerprint, Response $response): void
     {
         if ($response->getStatusCode() >= 500) {
-            $record->delete();
+            Cache::forget($cacheKey);
 
             return;
         }
 
-        $record->update([
+        Cache::put($cacheKey, [
+            'request_fingerprint' => $fingerprint,
             'response_status' => $response->getStatusCode(),
             'response_body' => $response instanceof JsonResponse
                 ? $response->getData(true)
                 : ['raw' => $response->getContent()],
-        ]);
+        ], $this->ttl());
+    }
+
+    private function cacheKey(Request $request, string $key): string
+    {
+        $scope = (string) ($request->route()?->getName() ?: $request->path());
+
+        return 'idempotency:'.$scope.':'.$key;
     }
 
     private function fingerprint(Request $request): string
     {
         return hash('sha256', json_encode($request->all()) ?: '');
+    }
+
+    private function ttl(): \DateTimeInterface
+    {
+        return now()->addHours((int) config('payments.idempotency_ttl_hours', 24));
     }
 }

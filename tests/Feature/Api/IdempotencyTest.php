@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Models\IdempotencyKey;
 use App\Models\Order;
 use App\Models\Product;
 use App\Payments\Gateways\FakeGateway;
-use Illuminate\Support\Facades\Artisan;
 
 const IDEM_ORDERS = '/api/v1/member/orders';
 
@@ -21,19 +19,6 @@ it('creates only one order when the same idempotency key is replayed', function 
 
     expect($second->json('data.id'))->toBe($first->json('data.id'))
         ->and(Order::count())->toBe(1);
-});
-
-it('prunes idempotency keys older than the configured ttl', function () {
-    config()->set('payments.idempotency_ttl_days', 7);
-
-    IdempotencyKey::create(['key' => 'old', 'scope' => 's', 'request_fingerprint' => 'f', 'response_status' => 201])
-        ->forceFill(['created_at' => now()->subDays(8)])->save();
-    IdempotencyKey::create(['key' => 'fresh', 'scope' => 's', 'request_fingerprint' => 'f', 'response_status' => 201]);
-
-    Artisan::call('model:prune', ['--model' => [IdempotencyKey::class]]);
-
-    expect(IdempotencyKey::count())->toBe(1)
-        ->and(IdempotencyKey::first()->key)->toBe('fresh');
 });
 
 it('creates separate orders for different idempotency keys', function () {

@@ -199,7 +199,9 @@ Adding a filter = add one method to the relevant `*Filter` class.
 `POST /member/orders` and `POST /member/cart/checkout` are **idempotent**. Send an
 `Idempotency-Key` header; a repeated request with the same key **replays the original
 response** instead of creating a duplicate order (Stripe-style). Reusing a key with a
-different request body returns `422`. Keys are stored in `idempotency_keys`.
+different request body returns `422`. Keys are stored in the cache with a 24h TTL
+(`payments.idempotency_ttl_hours`); a duplicate that arrives while the original is still
+in flight returns `409`.
 
 ```bash
 curl -X POST http://tocaan.test/api/v1/member/orders \

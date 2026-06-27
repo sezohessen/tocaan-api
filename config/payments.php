@@ -9,7 +9,7 @@ return [
 
     'default' => env('PAYMENTS_DEFAULT_GATEWAY', 'credit_card'),
 
-    'idempotency_ttl_days' => env('PAYMENTS_IDEMPOTENCY_TTL_DAYS', 7),
+    'idempotency_ttl_hours' => env('PAYMENTS_IDEMPOTENCY_TTL_HOURS', 24),
 
     'abandoned_cart_ttl_days' => env('PAYMENTS_ABANDONED_CART_TTL_DAYS', 30),
 
